@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
+import { TaskStatus } from './task-status.enum';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { Task, TaskStatus } from './tasks.model';
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { TaskEntity } from './task.entity';
 import { TasksService } from './tasks.service';
 import {
   Controller,
@@ -22,17 +24,16 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  getTasks(@Query(ValidationPipe) filterDto: GetTasksFilterDto): Task[] {
-    if (Object.keys(filterDto).length) {
-      return this.tasksService.getTaskWithFilters(filterDto);
-    } else {
-      return this.tasksService.getAllTasks();
-    }
+  async getTasks(
+    @Query(ValidationPipe) filterDto: GetTasksFilterDto,
+  ): Promise<TaskEntity[]> {
+    return this.tasksService.getTasks(filterDto);
   }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string) {
-    return this.tasksService.getTaskById(id);
+  async getTaskById(@Param('id') id): Promise<TaskEntity> {
+    const task = await this.tasksService.getTaskById(id);
+    return task;
   }
 
   @Post()
@@ -41,7 +42,7 @@ export class TasksController {
   createTask(
     @Body() createTaskDTO: CreateTaskDto,
     // @Body() body
-  ): Task {
+  ): Promise<TaskEntity> {
     return this.tasksService.createTask(createTaskDTO);
     // console.log(`${title} - ${text}`);
   }
@@ -52,13 +53,13 @@ export class TasksController {
     // Apply pipe on status only
     @Body('status', TaskStatusValidationPipe) status: TaskStatus,
     // @Body() body
-  ): Task {
-    return this.tasksService.updateTask(id, status);
+  ): Promise<TaskEntity> {
+    return this.tasksService.updateTaskStatus(id, status);
     // console.log(`${title} - ${text}`);
   }
 
   @Delete('/delete/:id')
-  deteleTask(@Param('id') id: string) {
-    this.tasksService.deleteTask(id);
+  deteleTask(@Param('id') id: string): Promise<void> {
+    return this.tasksService.deleteTask(id);
   }
 }
