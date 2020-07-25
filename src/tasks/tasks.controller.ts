@@ -1,3 +1,5 @@
+import { UserEntity } from './../auth/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import { TaskStatus } from './task-status.enum';
@@ -17,17 +19,21 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { GetUser } from 'src/auth/get-user.decorator';
 
 @Controller('tasks')
+@UseGuards(AuthGuard())
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
   async getTasks(
     @Query(ValidationPipe) filterDto: GetTasksFilterDto,
+    @GetUser() user: UserEntity,
   ): Promise<TaskEntity[]> {
-    return this.tasksService.getTasks(filterDto);
+    return this.tasksService.getTasks(filterDto, user);
   }
 
   @Get('/:id')
@@ -41,9 +47,10 @@ export class TasksController {
   @UsePipes(ValidationPipe)
   createTask(
     @Body() createTaskDTO: CreateTaskDto,
+    @GetUser() user: UserEntity,
     // @Body() body
   ): Promise<TaskEntity> {
-    return this.tasksService.createTask(createTaskDTO);
+    return this.tasksService.createTask(createTaskDTO, user);
     // console.log(`${title} - ${text}`);
   }
 

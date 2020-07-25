@@ -1,3 +1,4 @@
+import { UserEntity } from './../auth/user.entity';
 // import { v4 as uuid } from 'uuid';
 import { TaskEntity } from './task.entity';
 import { ObjectID } from 'mongodb';
@@ -15,8 +16,11 @@ export class TasksService {
     private taskRepository: TaskRepository,
   ) {}
 
-  async getTasks(filterDto: GetTasksFilterDto): Promise<TaskEntity[]> {
-    return this.taskRepository.getTasks(filterDto);
+  async getTasks(
+    filterDto: GetTasksFilterDto,
+    user: UserEntity,
+  ): Promise<TaskEntity[]> {
+    return this.taskRepository.getTasks(filterDto, user);
     // return this.taskRepository.find();
   }
 
@@ -29,8 +33,11 @@ export class TasksService {
     }
   }
 
-  async createTask(createTaskDto: CreateTaskDto): Promise<TaskEntity> {
-    return this.taskRepository.createTask(createTaskDto);
+  async createTask(
+    createTaskDto: CreateTaskDto,
+    user: UserEntity,
+  ): Promise<TaskEntity> {
+    return this.taskRepository.createTask(createTaskDto, user);
   }
 
   async updateTaskStatus(id: string, status: TaskStatus): Promise<TaskEntity> {
