@@ -31,7 +31,7 @@
     "@types/mongoose": "^5.7.32",
     "bcrypt": "^5.0.0",
     "class-transformer": "^0.2.3",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.14.0",
     "mongodb": "^3.5.9",
     "mongoose": "^5.9.25",
     "passport": "^0.4.1",
